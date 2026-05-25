@@ -1,77 +1,48 @@
 # CarouselGen
 
-CarouselGen is a Next.js app for creating social media carousel posts from manual input or free-form text. It includes a visual slide editor, multiple format presets, template galleries, image-aware layouts, and export flows for PNG, ZIP, and PDF.
+CarouselGen is a Next.js app for creating social media carousels from free text or structured JSON.
 
-This repository is currently a private staging repo. The product has been verified locally, but no public demo URL is attached yet.
+It supports:
 
-## What It Does
+- Instagram, TikTok/Reels, and LinkedIn formats
+- visual slide editing
+- template system (including image-aware templates)
+- API parsing (`/api/parse`) + generation (`/api/generate`)
+- export-ready slide output
 
-- Builds carousels for Instagram, TikTok/Reels, and LinkedIn formats.
-- Converts rough notes or prompts into editable carousel slides.
-- Provides manual editing for headline, subtext, emoji, brand label, accent color, font, and template.
-- Supports photo templates with uploaded images, direct image URLs, Unsplash API images, or deterministic fallback imagery.
-- Exports the finished carousel as single PNG, multi-image ZIP, or PDF.
-- Exposes API routes that can be used by agents or automations.
-
-## Status
+## Portfolio Status
 
 | Area | Status |
 | --- | --- |
-| Local app | Working |
 | Build | Passing |
-| Dependency audit | Passing |
-| API generation route | Working |
-| Text parsing | Working with Anthropic key, falls back locally without keys |
-| Public demo | Pending |
-| Monetization/auth | Not implemented |
+| Typecheck | Passing |
+| Template render tests | Passing |
+| API smoke test | Passing |
+| Public demo URL | Not deployed yet |
 
-## API
+## Verified on May 25, 2026
 
-### `POST /api/parse`
-
-Converts free-form text into a carousel configuration.
-
-```json
-{
-  "text": "Create a 5-slide LinkedIn carousel about launching a SaaS MVP"
-}
+```bash
+npm ci
+npm run typecheck
+npm run test:templates
+npm run build
 ```
 
-If `ANTHROPIC_API_KEY` is configured, the route uses Anthropic. Without a key, it returns a local deterministic fallback so the app remains usable in development and demos.
+API checks run locally:
 
-### `POST /api/generate`
+- `POST /api/parse` with free text input
+- `POST /api/generate` with structured config
+- `GET /api/generate` schema endpoint
 
-Accepts a structured carousel config and resolves image URLs for photo templates.
+## Stack
 
-```json
-{
-  "format": "instagram",
-  "template": "gradient-vibrant",
-  "accent_color": "#6366f1",
-  "brand_name": "@brand",
-  "slides": [
-    {
-      "text": "5 lessons from launching an MVP",
-      "subtext": "Swipe for the playbook",
-      "emoji": "🚀"
-    }
-  ]
-}
-```
-
-### `GET /api/generate`
-
-Returns the available API schema.
-
-## Environment Variables
-
-All keys are optional for local use.
-
-| Variable | Purpose |
-| --- | --- |
-| `ANTHROPIC_API_KEY` | Enables AI parsing for `/api/parse`. |
-| `ANTHROPIC_MODEL` | Optional model override. Defaults to `claude-sonnet-4-20250514`. |
-| `UNSPLASH_ACCESS_KEY` | Enables live Unsplash search for photo templates. |
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS
+- optional Anthropic API for smart parsing
+- optional Unsplash API for image lookup
 
 ## Local Development
 
@@ -82,15 +53,12 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-## Verification
+## Optional Environment Variables
 
-```bash
-npm run typecheck
-npm run build
-npm run test:templates
-npm audit --audit-level=moderate
-```
+| Variable | Purpose |
+| --- | --- |
+| `ANTHROPIC_API_KEY` | AI parsing in `/api/parse` |
+| `ANTHROPIC_MODEL` | Model override |
+| `UNSPLASH_ACCESS_KEY` | Live Unsplash image search |
 
-## Portfolio Note
-
-CarouselGen is a strong portfolio candidate once a public deployment is attached. Before making it public, the next steps are visual QA on desktop/mobile, a real demo URL, and a short product page with screenshots or a demo video.
+Without API keys, the app still works via deterministic local fallback behavior.
